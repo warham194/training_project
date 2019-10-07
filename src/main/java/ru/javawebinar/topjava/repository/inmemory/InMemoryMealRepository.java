@@ -5,6 +5,7 @@ import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.Util;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -43,7 +44,7 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         InMemoryBaseRepository<Meal> meals = usersMealsMap.get(userId);
-        return meals.get(id);
+        return meals == null ? null : meals.get(id);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        return null;
+        return getAllFiltered(userId, meal -> Util.isBetween(meal.getDateTime(),startDate, endDate));
     }
 
     private List<Meal> getAllFiltered(int userId, Predicate<Meal> filter) {
